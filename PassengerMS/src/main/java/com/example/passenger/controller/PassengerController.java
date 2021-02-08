@@ -1,5 +1,6 @@
 package com.example.passenger.controller;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.logging.Logger;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +35,17 @@ import com.example.passenger.service.PassengerService;
 import com.example.passenger.utility.ClientErrorInformation;
 
 @RestController
-@RibbonClient(name="passribbon")
+//@RibbonClient(name="passribbon")
 public class PassengerController {
 	
 	@Autowired
 	private PassengerService passengerService;
 	
+//	@Autowired
+//	RestTemplate template;
+	
 	@Autowired
-	RestTemplate template;
+	DiscoveryClient client;
 	
 	protected Logger logger = Logger.getLogger(PassengerController.class.getName());
 	
@@ -82,7 +88,11 @@ public class PassengerController {
           
 		//Flight flight = flightService.getFlights(flightId);
 		//call flight controller to get flights
-		SearchFlights searchFlight = template.getForObject("http://passribbon/flights/" + flightId, SearchFlights.class);
+		
+		List<ServiceInstance> flightInstance = client.getInstances("FLIGHTMS");
+		URI flightURI = flightInstance.get(0).getUri();
+		
+		SearchFlights searchFlight = new RestTemplate().getForObject(flightURI + "/flights/" + flightId, SearchFlights.class);
 		
 
 		double fare = searchFlight.getFare();
