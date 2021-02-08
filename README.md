@@ -29,7 +29,7 @@ Air reservation system website to practice microservices implementation
 ## REST Endpoints
 
 * Registration
-  * URL `http://localhost:4242/InfyGoBoot/register`
+  * URL `http://localhost:8200/register`
   * POST
   * ```json
      {
@@ -40,10 +40,9 @@ Air reservation system website to practice microservices implementation
        "email":"greg@smail.com",
        "phone":"8887654320"
       }
-   ```
 
 * Login
-  * URL `http://localhost:4242/InfyGoBoot/login`
+  * URL `http://localhost:localhost:8200/login`
   * POST
   * ```json
      {
