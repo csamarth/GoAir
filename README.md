@@ -33,12 +33,12 @@ Air reservation system website to practice microservices implementation
   * POST
   * ```json
      {
-     "userId":"C10011",
-     "password":"Greg^InfyGo",
-     "name":"Greg B",
-      "city":"LA",
-      "email":"greg@smail.com",
-      "phone":"8887654320"
+       "userId":"C10011",
+       "password":"Greg^InfyGo",
+       "name":"Greg B",
+       "city":"LA",
+       "email":"greg@smail.com",
+       "phone":"8887654320"
       }
    ```
 
@@ -47,6 +47,6 @@ Air reservation system website to practice microservices implementation
   * POST
   * ```json
      {
-     "userId":"C10011",
-     "password":"Greg^InfyGo"
+       "userId":"C10011",
+       "password":"Greg^InfyGo"
      }
