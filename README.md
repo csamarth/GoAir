@@ -39,7 +39,16 @@ Air reservation system website to practice microservices implementation
       ""city"":""LA"",
       ""email"":""greg@smail.com"",
       ""phone"":""8887654320""
-
       }"
    ```
-  
+
+* Login
+  * URL `http://localhost:4242/InfyGoBoot/login`
+  * POST
+  * ``` 
+     "{
+     ""userId"":""C10011"",
+     ""password"":""Greg^InfyGo""
+     }"
+
+   ```
