@@ -29,16 +29,17 @@ Air reservation system website to practice microservices implementation
 ## REST Endpoints
 
 * Registration
- * URL `http://localhost:4242/InfyGoBoot/register`
- * POST
- * ```
- "{
- ""userId"":""C10011"",
- ""password"":""Greg^InfyGo"",
- ""name"":""Greg B"",
-  ""city"":""LA"",
-  ""email"":""greg@smail.com"",
-  ""phone"":""8887654320""
-  
-}"
-```
+  * URL `http://localhost:4242/InfyGoBoot/register`
+  * POST
+  * 
+  ``` 
+     "{
+     ""userId"":""C10011"",
+     ""password"":""Greg^InfyGo"",
+     ""name"":""Greg B"",
+      ""city"":""LA"",
+      ""email"":""greg@smail.com"",
+      ""phone"":""8887654320""
+
+      }"
+   ```
