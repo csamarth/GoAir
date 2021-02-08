@@ -42,10 +42,10 @@ Air reservation system website to practice microservices implementation
       }
 
 * Login
-  * URL `http://localhost:localhost:8200/login`
+  * URL `http://localhost:8200/login`
   * POST
   * ```json
-     {
-       "userId":"C10011",
-       "password":"Greg^InfyGo"
-     }
+  	{
+    	"userId":"C10011",
+       	"password":"Greg^InfyGo"
+  	}
