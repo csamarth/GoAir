@@ -34,11 +34,11 @@ Air reservation system website to practice microservices implementation
   * ```json
      {
      "userId":"C10011",
-     "password"":""Greg^InfyGo",
-     "name"":"Greg B",
-      "city"":"LA",
-      "email"":"greg@smail.com",
-      "phone"":"8887654320"
+     "password":""Greg^InfyGo",
+     "name":"Greg B",
+      "city":"LA",
+      "email":"greg@smail.com",
+      "phone":"8887654320"
       }
    ```
 
