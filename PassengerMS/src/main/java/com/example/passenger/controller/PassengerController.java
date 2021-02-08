@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.passenger.PassengerConfig;
 import com.example.passenger.dto.BookingDetails;
 import com.example.passenger.dto.PassengerDetails;
 import com.example.passenger.dto.SearchFlights;
@@ -30,10 +32,14 @@ import com.example.passenger.service.PassengerService;
 import com.example.passenger.utility.ClientErrorInformation;
 
 @RestController
+@RibbonClient(name="passribbon")
 public class PassengerController {
 	
 	@Autowired
 	private PassengerService passengerService;
+	
+	@Autowired
+	RestTemplate template;
 	
 	protected Logger logger = Logger.getLogger(PassengerController.class.getName());
 	
@@ -76,7 +82,7 @@ public class PassengerController {
           
 		//Flight flight = flightService.getFlights(flightId);
 		//call flight controller to get flights
-		SearchFlights searchFlight = new RestTemplate().getForObject("http://localhost:8300/flights/" + flightId, SearchFlights.class);
+		SearchFlights searchFlight = template.getForObject("http://passribbon/flights/" + flightId, SearchFlights.class);
 		
 
 		double fare = searchFlight.getFare();
