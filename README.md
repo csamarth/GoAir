@@ -32,14 +32,14 @@ Air reservation system website to practice microservices implementation
   * URL `http://localhost:4242/InfyGoBoot/register`
   * POST
   * ```json
-     "{
-     ""userId"":""C10011"",
-     ""password"":""Greg^InfyGo"",
-     ""name"":""Greg B"",
-      ""city"":""LA"",
-      ""email"":""greg@smail.com"",
-      ""phone"":""8887654320""
-      }"
+     {
+     "userId":"C10011",
+     "password"":""Greg^InfyGo",
+     "name"":"Greg B",
+      "city"":"LA",
+      "email"":"greg@smail.com",
+      "phone"":"8887654320"
+      }
    ```
 
 * Login
