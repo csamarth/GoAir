@@ -1,18 +1,16 @@
 package com.example.passenger.controller;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.passenger.PassengerConfig;
 import com.example.passenger.dto.BookingDetails;
 import com.example.passenger.dto.PassengerDetails;
 import com.example.passenger.dto.SearchFlights;
@@ -31,8 +28,10 @@ import com.example.passenger.entity.Passenger;
 import com.example.passenger.exception.ARSServiceException;
 import com.example.passenger.exception.AirGoServiceException;
 import com.example.passenger.exception.ExceptionConstants;
+import com.example.passenger.service.PassHystrixService;
 import com.example.passenger.service.PassengerService;
 import com.example.passenger.utility.ClientErrorInformation;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 //@RibbonClient(name="passribbon")
@@ -42,7 +41,7 @@ public class PassengerController {
 	private PassengerService passengerService;
 	
 	@Autowired
-	RestTemplate template;
+	PassHystrixService hystService;
 	
 //	@Autowired
 //	DiscoveryClient client;
@@ -56,10 +55,11 @@ public class PassengerController {
 	public PassengerController() {
 		ticketDetails = new TicketDetails();
 	}
-
+	
+//	@HystrixCommand(fallbackMethod = "bookFlightFallBack")
 	@PostMapping(value = "/{flightId}/{username}", produces = "application/json", consumes = "application/json")
 	public ResponseEntity<BookingDetails> bookFlight(@PathVariable("flightId") String flightId,
-		 @Valid @RequestBody PassengerDetails passengerDetails, @PathVariable("username") String username,Errors errors) throws AirGoServiceException, ARSServiceException {
+		 @Valid @RequestBody PassengerDetails passengerDetails, @PathVariable("username") String username,Errors errors) throws AirGoServiceException, ARSServiceException, InterruptedException, ExecutionException {
 			
 		    if (errors.hasErrors()) {
 			return new ResponseEntity(new ClientErrorInformation(HttpStatus.BAD_REQUEST.value(),errors.getFieldError("passengerList").getDefaultMessage()), HttpStatus.BAD_REQUEST);
@@ -92,8 +92,8 @@ public class PassengerController {
 //		List<ServiceInstance> flightInstance = client.getInstances("FLIGHTMS");
 //		URI flightURI = flightInstance.get(0).getUri();
 		
-		SearchFlights searchFlight = template.getForObject("http://FLIGHTMS" + "/flights/" + flightId, SearchFlights.class);
-		
+//		Future<SearchFlights> searchFlightFuture = hystService.getFlight(flightId);
+		SearchFlights searchFlight = hystService.getFlight(flightId);
 
 		double fare = searchFlight.getFare();
 		System.out.println("Fare per person:****** " + fare);
@@ -116,16 +116,23 @@ public class PassengerController {
 		ticketDetails.setNoOfSeats(noOfSeats);
 		
 		logger.log(Level.INFO, ticketDetails.toString());
-		String response = new RestTemplate().postForObject("http://localhost:8500/tickets/", ticketDetails, String.class);
+		String response = hystService.createTicket(ticketDetails);
+//		String response = new RestTemplate().postForObject("http://localhost:8500/tickets/", ticketDetails, String.class);
 		logger.log(Level.INFO, response);
     
 		addPassengers(bookingDetails.getPassengerList());
 		
-		new RestTemplate().getForObject("http://localhost:8300/flights/" + flightId + "/" + noOfSeats, String.class);
+		hystService.updateFlight(flightId, noOfSeats);
+//		new RestTemplate().getForObject("http://localhost:8300/flights/" + flightId + "/" + noOfSeats, String.class);
 		//flightService.updateFlight(flightId, noOfSeats);
 
 		return new ResponseEntity<BookingDetails>(bookingDetails, HttpStatus.OK);
 
+	}
+	
+	public ResponseEntity<BookingDetails> bookFlightFallBack(@PathVariable("flightId") String flightId,
+			 @Valid @RequestBody PassengerDetails passengerDetails, @PathVariable("username") String username,Errors errors){
+		return new ResponseEntity<BookingDetails>(new BookingDetails(), HttpStatus.FAILED_DEPENDENCY);
 	}
 
 	private void addPassengers(List<Passenger> passengers) {
