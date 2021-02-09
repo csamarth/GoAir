@@ -41,11 +41,11 @@ public class PassengerController {
 	@Autowired
 	private PassengerService passengerService;
 	
-//	@Autowired
-//	RestTemplate template;
-	
 	@Autowired
-	DiscoveryClient client;
+	RestTemplate template;
+	
+//	@Autowired
+//	DiscoveryClient client;
 	
 	protected Logger logger = Logger.getLogger(PassengerController.class.getName());
 	
@@ -89,10 +89,10 @@ public class PassengerController {
 		//Flight flight = flightService.getFlights(flightId);
 		//call flight controller to get flights
 		
-		List<ServiceInstance> flightInstance = client.getInstances("FLIGHTMS");
-		URI flightURI = flightInstance.get(0).getUri();
+//		List<ServiceInstance> flightInstance = client.getInstances("FLIGHTMS");
+//		URI flightURI = flightInstance.get(0).getUri();
 		
-		SearchFlights searchFlight = new RestTemplate().getForObject(flightURI + "/flights/" + flightId, SearchFlights.class);
+		SearchFlights searchFlight = template.getForObject("http://FLIGHTMS" + "/flights/" + flightId, SearchFlights.class);
 		
 
 		double fare = searchFlight.getFare();
