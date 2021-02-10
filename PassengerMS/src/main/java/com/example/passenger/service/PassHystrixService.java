@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.passenger.controller.PassFlightFeign;
 import com.example.passenger.dto.SearchFlights;
 import com.example.passenger.dto.TicketDetails;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -13,10 +14,13 @@ public class PassHystrixService {
 	
 	@Autowired
 	RestTemplate template;
+	
+	@Autowired
+	PassFlightFeign flightFeign;
 
 	@HystrixCommand
 	public SearchFlights getFlight(String flightId) {
-		return template.getForObject("http://FLIGHTMS" + "/flights/" + flightId, SearchFlights.class);
+		return flightFeign.getFlight(flightId);
 	}
 	
 	@HystrixCommand

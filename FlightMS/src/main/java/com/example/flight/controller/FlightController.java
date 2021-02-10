@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.flight.dto.SearchFlights;
-import com.example.flight.entity.Flight;
 import com.example.flight.exception.ARSServiceException;
 import com.example.flight.service.FlightService;
 import com.example.flight.utility.MyDateEditor;
@@ -43,6 +42,8 @@ public class FlightController {
 	@GetMapping("/{flightId}")
 	public SearchFlights getFlights(@PathVariable("flightId") String flightId) throws ARSServiceException {
 		System.out.println("flight id" + flightId);
+		if(flightId.equals("F109"))
+			throw new RuntimeException();
 		return flightService.getFlights(flightId);
 	}
 
